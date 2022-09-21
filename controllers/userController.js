@@ -26,7 +26,17 @@ exports.register = async (req, res) => {
 
     // const firstName = req.body.first_name;
     
-    const {first_name, last_name, email, password, confirm_password} = req.body;
+    const {
+            first_name, 
+            last_name, 
+            email, 
+            password, 
+            password_confirmation,
+    } = req.body;
+
+    const image = req.files.image[0];
+    const imagePath = req.protocol+"://"+req.get("host")+"/public/uploads/"+image.filename; 
+    console.log(imagePath);
 
     let error_list = {};
     //error_list.first_name = first_name ? "" : "First Name is required";
@@ -34,8 +44,8 @@ exports.register = async (req, res) => {
         return res.status(400).json(error_list);
     }
 
-    if(password !== confirm_password){
-        error_list.confirm_password = "Password does not match"
+    if(password !== password_confirmation){
+        error_list.password_confirmation = "Password does not match"
         return res.status(400).json(error_list);
     }
 
@@ -65,7 +75,8 @@ exports.register = async (req, res) => {
                     first_name: first_name,
                     last_name: last_name,
                     email: email,
-                    password: hashpassword
+                    password: hashpassword,
+                    image: imagePath
                 },
                 (err) => {
                     if(err) {
